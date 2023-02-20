@@ -6,8 +6,8 @@ import pygame
 from wind import WindSpaceTime, WindSpace
 
 
-def show_wst(wst: WindSpaceTime, timestep=0.1, spacestep=1, trajectory=None, csea=(29, 162, 216), cland=(77, 107, 83),
-             cwind=(6, 66, 115), ctraj=(180, 6, 66)):
+def show_wst(wst: WindSpaceTime, timestep=0.1, spacestep=1, trajectory=None, csea=(157, 219, 255), cland=(130, 167, 117),
+             cwind=(59, 114, 124), ctraj=(176, 95, 102)):
     pygame.init()
     pygame_info = pygame.display.Info()
     dw = pygame_info.current_w
@@ -115,8 +115,8 @@ def show_wst(wst: WindSpaceTime, timestep=0.1, spacestep=1, trajectory=None, cse
     pygame.quit()
 
 
-def show_ws(ws: WindSpace, spacestep=1, trajectory=None, csea=(29, 162, 216), cland=(77, 107, 83), cwind=(6, 66, 115),
-         ctraj=(180, 6, 66)):
+def show_ws(ws: WindSpace, spacestep=1, trajectory=None, csea=(157, 219, 255), cland=(130, 167, 117),
+            cwind=(59, 114, 124), ctraj=(176, 95, 102)):
     pygame.init()
     pygame_info = pygame.display.Info()
     dw = pygame_info.current_w
