@@ -1,7 +1,5 @@
 import math
 import numpy as np
-import matplotlib.pyplot as plt
-import matplotlib.animation as animate
 import pickle
 import os
 os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
@@ -226,7 +224,7 @@ class WindSpace :
 		
 		return Wind(vect[0],vect[1])
 		
-	def show(self, spacestep = 1) :
+	def show(self, spacestep = 1, trajectory = [], csea = (29,162,216), cland = (77,107,83), cwind = (6,66,115), ctraj = (180,6,66)) :
 		
 		pygame.init()
 		pygame_info = pygame.display.Info()
@@ -237,10 +235,16 @@ class WindSpace :
 		
 		window = pygame.display.set_mode((f * self.w, f * self.h))
 		
+		trajectory = [(round(p[0] * f), round(p[1] * f)) for p in trajectory]
+		
 		running = True
 		
 		landmap = pygame.Surface((f * self.w, f * self.h))
-		landmap.fill((29,162,216))
+		landmap.fill(csea)
+		
+		if len(trajectory) > 0 :
+				
+			pygame.draw.aalines(landmap, ctraj, False, trajectory)
 		
 		for x in range(0, self.w) :
 			
@@ -248,13 +252,13 @@ class WindSpace :
 
 				if np.isnan(self.table[x][y][0]) :
 					
-					pygame.draw.rect(landmap, (77,107,83), (f * x, f * y, f, f))
+					pygame.draw.rect(landmap, cland, (f * x, f * y, f, f))
 					
 				else :
 					
 					if (x > 0 and x < self.w - 1 and y > 0 and y < self.h - 1 and np.isnan(self.table[x - 1][y][0]) and np.isnan(self.table[x + 1][y][0]) and np.isnan(self.table[x][y - 1][0]) and np.isnan(self.table[x][y + 1][0])) :
 						
-						pygame.draw.rect(landmap, (77,107,83), (f * x, f * y, f, f))
+						pygame.draw.rect(landmap, cland, (f * x, f * y, f, f))
 						
 					else :
 						
@@ -263,22 +267,22 @@ class WindSpace :
 							
 							if y > 0 and np.isnan(self.table[x][y - 1][0]) :
 							
-								pygame.draw.polygon(landmap, (77,107,83), ((f * x, f * y), (f * x, f * (y + 1) - 2), (f * (x + 1) - 2, f * y)))
+								pygame.draw.polygon(landmap, cland, ((f * x, f * y), (f * x, f * (y + 1) - 2), (f * (x + 1) - 2, f * y)))
 								
 							if y < self.h - 1 and np.isnan(self.table[x][y + 1][0]) :
 							
-								pygame.draw.polygon(landmap, (77,107,83), ((f * x, f * (y + 1)), (f * (x + 1) - 1, f * (y + 1)), (f * x, f * y + 1)))
+								pygame.draw.polygon(landmap, cland, ((f * x, f * (y + 1)), (f * (x + 1) - 1, f * (y + 1)), (f * x, f * y + 1)))
 								
 						if x < self.w - 1 and np.isnan(self.table[x + 1][y][0]) :
 							
 							if y > 0 and np.isnan(self.table[x][y - 1][0]) :
 							
-								pygame.draw.polygon(landmap, (77,107,83), ((f * (x + 1), f * (y + 1) - 1), (f * (x + 1), f * y ), (f * x + 1, f * y)))
+								pygame.draw.polygon(landmap, cland, ((f * (x + 1), f * (y + 1) - 1), (f * (x + 1), f * y ), (f * x + 1, f * y)))
 								
 							if y < self.h - 1 and np.isnan(self.table[x][y + 1][0]) :
 							
-								pygame.draw.polygon(landmap, (77,107,83), ((f * (x + 1), f * y), (f * (x + 1), f * (y + 1)), (f * x, f * (y + 1))))
-		
+								pygame.draw.polygon(landmap, cland, ((f * (x + 1), f * y), (f * (x + 1), f * (y + 1)), (f * x, f * (y + 1))))
+							
 		while running :
 			
 			window.blit(landmap, (0, 0))
@@ -291,7 +295,7 @@ class WindSpace :
 					running = False
 			
 			for x in range(0, self.w, spacestep) :
-			
+				
 				for y in range(0, self.h, spacestep) :
 
 					if not(np.isnan(self.table[x][y][0])) :
@@ -305,7 +309,7 @@ class WindSpace :
 						pygame.draw.aaline(window, cwind, (ax, ay), (bx, by))
 						pygame.draw.line(window, cwind, (ax - 1, ay), (ax + 1, ay))
 						pygame.draw.line(window, cwind, (ax, ay - 1), (ax, ay + 1))
-	
+
 			pygame.display.flip()
 			
 		pygame.quit()
