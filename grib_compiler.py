@@ -28,8 +28,9 @@ def comp(name) :
 			
 			field = line.split(",")
 			
-			lon = round((((float(field[4]) + 360) % 360) - W) * 4)
-			lat = round((((float(field[5]) + 360) % 360) - S) * 4)
+			lon = round(((float(field[4]) + 720 - W) % 360) * 4)
+			lat = h - 1 - round(((float(field[5]) + 720 - S) % 360) * 4)
+				
 			val = float(field[6])
 			L[lon][lat] = val
 			
@@ -49,8 +50,8 @@ def comp(name) :
 				field = line.split(",")
 			
 				n = field[2][1]
-				lon = round((float(field[4]) + 360 - W) % 360 * 4)
-				lat = round((float(field[5]) + 360 - S) % 360 * 4)
+				lon = round(((float(field[4]) + 720 - W) % 360) * 4)
+				lat = h - 1 - round(((float(field[5]) + 720 - S) % 360) * 4)
 				val = float(field[6])
 				
 				if n == "U" :
@@ -81,4 +82,4 @@ def comp(name) :
 
 if __name__ == "__main__" :
 	
-	comp("Sargasso")
+	comp("MediteraneanSea")

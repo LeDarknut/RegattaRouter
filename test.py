@@ -1,4 +1,4 @@
 import wind
 
 wst = wind.load("Sargasso")
-wst.show(0.5, 4)
+wst.windspace(0).show2(4)
