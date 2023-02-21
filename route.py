@@ -19,6 +19,20 @@ class Route:
 		self.moves.append(vector)
 		self.trace.append(self.trace[-1] + vector)
 
+	def get(self, t):
+		#Get position at time (with linear interpolation)
+
+		assert t >= 0         , "negative time"
+		assert t <= self.t - 1, "time overflow"
+
+		if type(t) == float :
+			ft = math.floor(t)
+			dt = t - ft
+			return self.trace[ft] + dt * self.moves[ft]
+
+		else :
+			return self.trace[t]
+
 	def current(self):
 		#Get last point
 
