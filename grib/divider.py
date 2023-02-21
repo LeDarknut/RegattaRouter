@@ -16,13 +16,13 @@ def divide(name, T0, T1, W, E, S, N) :
 
 	files = ["land"] + sorted([n[:-4] for n in os.listdir("grib") if T0 <= n and T1 >= n and n != "land.grb"])
 		
-	if not(os.path.exists("subgrib/" + name)) :
+	if not(os.path.exists("region/" + name)) :
 
-		os.mkdir("subgrib/" + name)
+		os.mkdir("region/" + name)
 
 	for f in files :
 			
-		os.popen("wgrib2 grib/{0}.grb -small_grib {1}:{2} {3}:{4} subgrib/{5}/{0}.grb".format(f, W, E, S, N, name)).read()
+		os.popen("wgrib2 global/{0}.grb -small_grib {1}:{2} {3}:{4} region/{5}/{0}.grb".format(f, W, E, S, N, name)).read()
 		
 		print(f)
 		

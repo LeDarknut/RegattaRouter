@@ -1,7 +1,7 @@
 from math import cos, sin
 
 
-class Trajectory:
+class Route:
     
     def __init__(self, start, step_length = 1, points = None):
         self.start = start
