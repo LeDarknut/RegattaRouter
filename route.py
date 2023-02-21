@@ -1,21 +1,27 @@
-from math import cos, sin
-
+from geometry import *
 
 class Route:
     
-    def __init__(self, start, step_length = 1, points = None):
+    def __init__(self, start : Point, moves = []):
         self.start = start
-        self.step_length = step_length
-        if points is None:
-            self.points = [start]
-        else:
-            self.points = points
+        self.moves = moves
+        self.trace = [self.start]
+        for vector in self.moves :
+            self.trace.append(self.trace[-1] + vector)
     
-    def add_point(self, angle):
-        x, y = self.points[-1]
-        x += self.step_length * cos(angle)
-        y += self.step_length * sin(angle)
-        self.points.append((x, y))
+    def move(self, vector : Vector):
+        self.moves.append(vector)
+        self.trace.append(self.trace[-1] + vector)
+
+    def averageNorm(self):
+        s = 0
+        if len(self.moves) > 0 :
+            for vector in self.moves :
+                s += vector.norm()
+
+            s /= len(self.moves)
+        
+        return s
     
-    def round(self, f):
-        return [(round(p[0] * f), round(p[1] * f)) for p in self.points]
+    def export(self, f):
+        return [(round(point.x * f), round(point.y * f)) for point in self.trace]

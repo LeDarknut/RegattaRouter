@@ -19,9 +19,9 @@ def show_wst(wst: WindSpaceTime, timestep=0.1, spacestep=1, route=None, csea=(15
 	window = pygame.display.set_mode((f * wst.w, f * wst.h))
 	
 	if route is None:
-		route = []
+		trace = []
 	else:
-		route = route.round(f)
+		trace = route.export(f)
 	
 	running = True
 	
@@ -67,8 +67,8 @@ def show_wst(wst: WindSpaceTime, timestep=0.1, spacestep=1, route=None, csea=(15
 							pygame.draw.polygon(landmap, cland, (
 							(f * (x + 1), f * y), (f * (x + 1), f * (y + 1)), (f * x, f * (y + 1))))
 	
-	if len(route) > 0:
-		pygame.draw.aalines(landmap, cboat, False, route)
+	if len(trace) > 0:
+		pygame.draw.aalines(landmap, cboat, False, trace)
 
 	step = 0
 	
@@ -77,9 +77,7 @@ def show_wst(wst: WindSpaceTime, timestep=0.1, spacestep=1, route=None, csea=(15
 		t = step * timestep
 		
 		if t > wst.t - 1:
-			running = False
-			
-			break
+			step, t = 0, 0
 		
 		window.blit(landmap, (0, 0))
 		
@@ -107,8 +105,8 @@ def show_wst(wst: WindSpaceTime, timestep=0.1, spacestep=1, route=None, csea=(15
 					pygame.draw.line(window, cwind, (ax - 1, ay), (ax + 1, ay))
 					pygame.draw.line(window, cwind, (ax, ay - 1), (ax, ay + 1))
 		
-		if len(route) > step:
-			pygame.draw.circle(window, cboat, route[step], 5)
+		if len(trace) > step:
+			pygame.draw.circle(window, cboat, trace[step], 5)
 		
 		step += 1
 		
