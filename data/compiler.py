@@ -1,6 +1,6 @@
 import os
 import pickle
-import wind
+import numpy
 
 def comp(name) :
 	
@@ -18,7 +18,7 @@ def comp(name) :
 
 	files = sorted(os.listdir("divided/{0}".format(name)))[:-1]
 
-	L = wind.np.zeros((w, h))
+	L = numpy.zeros((w, h))
 
 	os.popen("wgrib2 divided/{0}/land.grb -csv land.csv".format(name)).read()
 
@@ -37,7 +37,7 @@ def comp(name) :
 				
 	os.unlink("land.csv")
 
-	wst = wind.WindSpaceTime(len(files), w, h)
+	table = numpy.zeros((len(files), w, h, 2))
 
 	for t,f in enumerate(files) :
 			
@@ -58,25 +58,25 @@ def comp(name) :
 					
 					if L[lon][lat] > 0.5 :
 						
-						wst.table[t][lon][lat][0] = wind.np.nan
+						table[t][lon][lat][0] = numpy.nan
 						
 					else :
 					
-						wst.table[t][lon][lat][0] = val
+						table[t][lon][lat][0] = val
 					
 				elif n == "V" :
 					
 					if L[lon][lat] > 0.5 :
 						
-						wst.table[t][lon][lat][1] = wind.np.nan
+						table[t][lon][lat][1] = numpy.nan
 						
 					else :
 					
-						wst.table[t][lon][lat][1] = val
+						table[t][lon][lat][1] = val
 		
 		print(f[:-4])
 			
-	pickle.dump(wst, open("compiled/{0}.bin".format(name), "wb"))
+	pickle.dump(table, open("compiled/{0}.bin".format(name), "wb"))
 	
 	os.unlink("wind.csv")
 

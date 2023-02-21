@@ -5,6 +5,7 @@ os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
 import pygame
 from wind import WindSpaceTime, WindSpace
 from route import Route
+from geometry import Vector
 
 
 def showWindSpaceTime(wst: WindSpaceTime, timestep=0.1, spacestep=1, route=None):
@@ -13,6 +14,7 @@ def showWindSpaceTime(wst: WindSpaceTime, timestep=0.1, spacestep=1, route=None)
 	csea=(157, 219, 255)
 	cland=(130, 167, 117)
 	cwind=(59, 114, 124)
+	ctraj=(100, 81, 59)
 	cboat=(176, 95, 102)
 	
 	pygame.init()
@@ -30,7 +32,7 @@ def showWindSpaceTime(wst: WindSpaceTime, timestep=0.1, spacestep=1, route=None)
 
 	drawSea(landmap, csea)
 	drawLands(landmap, wst.windspace(0), f, cland)
-	drawRoute(landmap, route, f, cboat)
+	drawRoute(landmap, route, f, ctraj)
 
 	step = 0
 	
@@ -67,6 +69,7 @@ def showWindSpace(ws: WindSpace, spacestep=1, route=None):
 	csea=(157, 219, 255)
 	cland=(130, 167, 117)
 	cwind=(59, 114, 124)
+	ctraj=(100, 81, 59)
 	cboat=(176, 95, 102)
 
 	pygame.init()
@@ -84,7 +87,7 @@ def showWindSpace(ws: WindSpace, spacestep=1, route=None):
 
 	drawSea(landmap, csea)
 	drawLands(landmap, wst.windspace(0), f, cland)
-	drawRoute(landmap, route, f, cboat)
+	drawRoute(landmap, route, f, ctraj)
 	
 	while running:
 		
@@ -176,9 +179,102 @@ def drawWinds(surface, ws : WindSpace, spacestep, f, color) :
 				pygame.draw.line(surface, color, (ax - 1, ay), (ax + 1, ay))
 				pygame.draw.line(surface, color, (ax, ay - 1), (ax, ay + 1))
 
-def drawBoat(surface, route : Route, step, f, color) :
+def drawBoat(surface, route : Route, step, f, color, r = 6) :
 	#Draw a boat onto a pygame surface
 
-	if len(route.trace) > step:
-		point = route.trace[step]
-		pygame.draw.circle(surface, color, (round(point.x * f), round(point.y * f)), 5)
+	if step > len(route.moves) - 1:
+		return
+
+	vect = (route.moves[step] ** 0.5) * f * 8
+	
+	shyvect = vect.absed()
+	
+	if shyvect.x < shyvect.y :
+		
+		shyvect.swap()
+
+	(shyvect + 2 * Vector(r + 1, r + 1)).ceiled().pair()
+	
+	C = numpy.zeros((shyvect + 2 * Vector(r + 1, r + 1)).ceiled().pair())
+	
+	for x in range(0, 2 * r) :
+		
+		for y in range(0, 2 * r) :
+			
+			d = math.sqrt((x - r) ** 2 + (y - r) ** 2)
+			
+			if d < r :
+			
+				C[x, y] = min(255, round(255 * (r - d)))
+	
+	Ox, Oy = r, r
+	
+	if shyvect.square() > r ** 2 :
+		
+		inv = 1 / (shyvect.square())
+		
+		slope = shyvect.slope()
+		
+		proj = math.sqrt(1 - shyvect.y ** 2 * inv)
+		
+		x = 0
+				
+		while x <= C.shape[0] - 1 :
+		
+			py = r + round(shyvect.y - (shyvect.x - (x - r)) * slope)
+			
+			y = min(C.shape[1] - 1, py + r)
+			
+			while True :
+				
+				t = 1 - ((x - r) * shyvect.x + (y - r) * shyvect.y) * inv
+				
+				if t <= 1 :
+				
+					d = proj * abs((x - r) * slope - (y - r))
+				
+					if (r - 1) * t >= d - 1 :
+					
+						C[x, y] = 255 - round((255 - C[x, y]) * max(0, d - (r - 1) * t))
+						
+						y -= 1
+						
+						continue
+						
+				if y < py :
+						
+					break
+					
+				else :
+					
+					y -= 1
+					
+					continue
+
+			x += 1
+		
+		if abs(vect.x) < abs(vect.y) :
+			
+			C = numpy.transpose(C)
+			
+		if vect.x < 0 :
+			
+			C = numpy.flipud(C)
+			
+			Ox = C.shape[0] - 1 - r
+			
+		if vect.y < 0 :
+			
+			C = numpy.fliplr(C)
+			
+			Oy = C.shape[1] - 1 - r
+		
+	arrow = pygame.Surface((C.shape[0], C.shape[1])).convert_alpha()
+
+	for x in range(C.shape[0]) :
+
+		for y in range(C.shape[1]) :
+
+			arrow.set_at((x, y), (color[0], color[1], color[2], C[x, y]))
+
+	surface.blit(arrow, (route.trace[step].x * f - Ox, route.trace[step].y * f - Oy))

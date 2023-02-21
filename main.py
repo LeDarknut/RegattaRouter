@@ -1,19 +1,24 @@
 import math
 import random
-from geometry import Vector, Point
+from geometry import Vector
 from wind import *
 from display import showWindSpaceTime
 from route import Route
 
-wst = WindSpaceTime.fromFile("MediteraneanSea")
-route = Route(Point(random.randrange(0, wst.w), random.randrange(0, wst.h)))
+wst = WindSpaceTime.fromFile("Sargasso")
+route = Route(Vector.fromRandom(wst.w, wst.h))
 angle = 2 * random.random() * math.pi
+speed = 1
 
-for i in range(10 * wst.t):
-    
-    route.move(Vector(math.cos(angle), math.sin(angle)))
-    
-    if random.randrange(0, 10) == 0:
-        angle += random.random() * 2 * (random.random() - 0.5) * math.pi
+timediv = 10
+spacediv = 2
 
-showWindSpaceTime(wst, 0.05, 3, route)
+for i in range(timediv * wst.t):
+    
+    route.move(Vector.fromAngle(angle, speed / spacediv))
+    
+    if random.randrange(0, 5) == 0:
+        angle += random.random() * (random.random() - 0.5) * math.pi
+        speed += random.random() * (random.random() - 0.5)
+
+showWindSpaceTime(wst, 1 / timediv, 3, route)

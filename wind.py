@@ -14,7 +14,7 @@ class WindSpaceTime :
 	def __init__(self, t, w, h, table = None) :
 		
 		if table is None :
-			table = numpy.zeros(shape=(t,w,h,2))
+			table = numpy.zeros((t,w,h,2))
 		
 		self.t = t
 		self.w = w
@@ -24,8 +24,10 @@ class WindSpaceTime :
 	@classmethod
 	def fromFile(cls, filename) :
 		#Get WindSPaceTime compiled from grib
+
+		table = pickle.load(open("data/compiled/{0}.bin".format(filename), "rb"))
 		
-		return pickle.load(open("data/compiled/{0}.bin".format(filename), "rb"))
+		return cls(table.shape[0], table.shape[1], table.shape[2], table)
 		
 	def windspace(self, t) :
 		#Get WindSpace object from time (with linear interpolation)
@@ -120,7 +122,7 @@ class WindSpace :
 	def __init__(self, w, h, table = None) :
 		
 		if table is None :
-			table = numpy.zeros(shape=(w,h,2))
+			table = numpy.zeros((w,h,2))
 		
 		self.w = w
 		self.h = h

@@ -7,7 +7,7 @@ class Route:
 	#trace : list of points
 	#moves : list of vectors separating trace's points
 	
-	def __init__(self, start : Point, moves = []):
+	def __init__(self, start : Vector, moves = []):
 		self.trace = [start]
 		self.moves = moves
 		for vector in self.moves :
@@ -64,4 +64,4 @@ class Route:
 	def export(self, f):
 		#Get scaled and rounded path
 
-		return [(round(point.x * f), round(point.y * f)) for point in self.trace]
+		return [(point * f).rounded().pair() for point in self.trace]
