@@ -20,8 +20,10 @@ class Route:
                 s += vector.norm()
 
             s /= len(self.moves)
-        
         return s
+
+    def current(self):
+        return self.trace[-1]
     
     def export(self, f):
         return [(round(point.x * f), round(point.y * f)) for point in self.trace]
