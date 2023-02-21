@@ -1,18 +1,18 @@
 import math
-import numpy as np
+import numpy
 import pickle
 
 def load(filename) :
 	
-	return pickle.load(open("wst/{0}.bin".format(filename), "rb"))
+	return pickle.load(open("data/compiled/{0}.bin".format(filename), "rb"))
 
 class WindSpaceTime :
 	
 	def __init__(self, t, w, h, table = None) :
 		
-		if type(table) != np.ndarray :
+		if type(table) != numpy.ndarray :
 			
-			table = np.zeros(shape=(t,w,h,2))
+			table = numpy.zeros(shape=(t,w,h,2))
 		
 		self.t = t
 		self.w = w
@@ -74,6 +74,10 @@ class WindSpaceTime :
 		vect = (1-dx) * lerpfx + dx * lerpcx
 		
 		return Wind(vect[0],vect[1])
+
+	def land(self, x, y) :
+
+		return numpy.isnan(self.table[0][x][y][0])
 		
 	
 		
@@ -82,9 +86,9 @@ class WindSpace :
 	
 	def __init__(self, w, h, table = False) :
 		
-		if type(table) != np.ndarray :
+		if type(table) != numpy.ndarray :
 			
-			table = np.zeros(shape=(w,h,2))
+			table = numpy.zeros(shape=(w,h,2))
 		
 		self.w = w
 		self.h = h
@@ -114,6 +118,10 @@ class WindSpace :
 		vect = (1-dx) * lerpfx + dx * lerpcx
 		
 		return Wind(vect[0],vect[1])
+
+	def land(self, x, y) :
+
+		return numpy.isnan(self.table[x][y][0])
 		
 		
 class Wind :

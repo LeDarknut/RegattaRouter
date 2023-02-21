@@ -8,6 +8,7 @@ from wind import WindSpaceTime, WindSpace
 
 def show_wst(wst: WindSpaceTime, timestep=0.1, spacestep=1, route=None, csea=(157, 219, 255), cland=(130, 167, 117),
 			 cwind=(59, 114, 124), cboat=(176, 95, 102)):
+	
 	pygame.init()
 	pygame_info = pygame.display.Info()
 	dw = pygame_info.current_w
@@ -27,48 +28,48 @@ def show_wst(wst: WindSpaceTime, timestep=0.1, spacestep=1, route=None, csea=(15
 	landmap = pygame.Surface((f * wst.w, f * wst.h))
 	landmap.fill(csea)
 	
-	if len(route) > 0:
-		pygame.draw.aalines(landmap, cboat, False, route)
-	
 	for x in range(0, wst.w):
 		
 		for y in range(0, wst.h):
 			
-			if numpy.isnan(wst.table[0][x][y][0]):
+			if wst.land(x, y):
 				
 				pygame.draw.rect(landmap, cland, (f * x, f * y, f, f))
 			
 			else:
 				
-				if ((x <= 0         or numpy.isnan(wst.table[0][x - 1][y][0])) and
-					(x >= wst.w - 1 or numpy.isnan(wst.table[0][x + 1][y][0])) and
-					(y <= 0         or numpy.isnan(wst.table[0][x][y - 1][0])) and 
-					(y >= wst.h - 1 or numpy.isnan(wst.table[0][x][y + 1][0]))):
+				if ((x <= 0         or wst.land(x - 1, y)) and
+					(x >= wst.w - 1 or wst.land(x + 1, y)) and
+					(y <= 0         or wst.land(x, y - 1)) and 
+					(y >= wst.h - 1 or wst.land(x, y + 1))):
 					
 					pygame.draw.rect(landmap, cland, (f * x, f * y, f, f))
 				
 				else:
 					
-					if x > 0 and numpy.isnan(wst.table[0][x - 1][y][0]):
+					if x > 0 and wst.land(x - 1, y):
 						
-						if y > 0 and numpy.isnan(wst.table[0][x][y - 1][0]):
+						if y > 0 and wst.land(x, y - 1):
 							pygame.draw.polygon(landmap, cland,
 												((f * x, f * y), (f * x, f * (y + 1) - 2), (f * (x + 1) - 2, f * y)))
 						
-						if y < wst.h - 1 and numpy.isnan(wst.table[0][x][y + 1][0]):
+						if y < wst.h - 1 and wst.land(x, y + 1):
 							pygame.draw.polygon(landmap, cland, (
 							(f * x, f * (y + 1)), (f * (x + 1) - 1, f * (y + 1)), (f * x, f * y + 1)))
 					
-					if x < wst.w - 1 and numpy.isnan(wst.table[0][x + 1][y][0]):
+					if x < wst.w - 1 and wst.land(x + 1, y):
 						
-						if y > 0 and numpy.isnan(wst.table[0][x][y - 1][0]):
+						if y > 0 and wst.land(x, y - 1):
 							pygame.draw.polygon(landmap, cland, (
 							(f * (x + 1), f * (y + 1) - 1), (f * (x + 1), f * y), (f * x + 1, f * y)))
 						
-						if y < wst.h - 1 and numpy.isnan(wst.table[0][x][y + 1][0]):
+						if y < wst.h - 1 and wst.land(x, y + 1):
 							pygame.draw.polygon(landmap, cland, (
 							(f * (x + 1), f * y), (f * (x + 1), f * (y + 1)), (f * x, f * (y + 1))))
 	
+	if len(route) > 0:
+		pygame.draw.aalines(landmap, cboat, False, route)
+
 	step = 0
 	
 	while running:
@@ -95,7 +96,7 @@ def show_wst(wst: WindSpaceTime, timestep=0.1, spacestep=1, route=None, csea=(15
 			
 			for y in range(0, wst.h, spacestep):
 				
-				if not (numpy.isnan(ws.table[x][y][0])):
+				if not (wst.land(x, y)):
 					ax = round(f * (x + 0.5))
 					ay = round(f * (y + 0.5))
 					
