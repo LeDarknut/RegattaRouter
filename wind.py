@@ -2,66 +2,72 @@ import math
 import numpy
 import pickle
 
-def load(filename) :
-	
-	return pickle.load(open("data/compiled/{0}.bin".format(filename), "rb"))
-
 class WindSpaceTime :
+
+	#WindSpaceTime object : 3-dimentional grid representing the evolution of winds through space and time
 	
+	#t : duration of the time grid
+	#w : width of the spatial grid
+	#h : height of the spatial grid
+	#table : the grid table[t][x][y] = [dx, dy]
+
 	def __init__(self, t, w, h, table = None) :
 		
-		if type(table) != numpy.ndarray :
-			
+		if table is None :
 			table = numpy.zeros(shape=(t,w,h,2))
 		
 		self.t = t
 		self.w = w
 		self.h = h
 		self.table = table
+
+	@classmethod
+	def fromFile(cls, filename) :
+		#Get WindSPaceTime compiled from grib
+		
+		return pickle.load(open("data/compiled/{0}.bin".format(filename), "rb"))
 		
 	def windspace(self, t) :
-		
-		ft = math.floor(t)
-		ct = math.ceil(t)
+		#Get WindSpace object from time (with linear interpolation)
 
-		dt = t - ft
+		if type(t) == float :
 		
-		assert ft >= 0, "negative time"
-		assert ct <= self.t - 1, "time overflow"
-		
-		if dt == 0 :
-		
-			return WindSpace(self.w, self.h, self.table[ft])
-			
-		else :
-			
+			ft = math.floor(t)
+			ct = math.ceil(t)
+			dt = t - ft
+			assert ft >= 0, "negative time"
+			assert ct <= self.t - 1, "time overflow"
+
 			return WindSpace(self.w, self.h, (1 - dt) * self.table[ft] + dt * self.table[ct])
+
+		else :
+
+			assert t >= 0, "negative time"
+			assert t <= self.t - 1, "time overflow"
+		
+			return WindSpace(self.w, self.h, self.table[t])
+			
 			
 	def wind(self, t, x, y) :
+		#Get Wind object from time and position (with trilinear interpolation)
 
 		if type(t) == float or type(x) == float or type(y) == float :
 		
 			ft = math.floor(t)
 			ct = math.ceil(t)
-
 			dt = t - ft
-			
 			assert ft >= 0, "negative time"
 			assert ct <= self.t - 1, "time overflow"
 			
 			fx = math.floor(x)
 			cx = math.ceil(x)
-
 			dx = x - fx
-			
 			assert fx >= 0, "negative abscisse"
 			assert cx <= self.w - 1, "abscisse overflow"
 			
 			fy = math.floor(y)
 			cy = math.ceil(y)
-
 			dy = y - fy
-			
 			assert fy >= 0, "negative ordinate"
 			assert cy <= self.h - 1, "ordinate overflow"
 			
@@ -73,9 +79,7 @@ class WindSpaceTime :
 			lerpfx = (1-dy) * lerpfxfy + dy * lerpfxcy
 			lerpcx = (1-dy) * lerpcxfy + dy * lerpcxcy
 			
-			vect = (1-dx) * lerpfx + dx * lerpcx
-			
-			return Wind(vect[0],vect[1])
+			return Vector.fromPair((1-dx) * lerpfx + dx * lerpcx)
 
 		else :
 
@@ -86,23 +90,20 @@ class WindSpaceTime :
 			assert y >= 0, "negative ordinate"
 			assert y <= self.h - 1, "ordinate overflow"
 
-			vect = self.table[t][x][y]
-
-			return Wind(vect[0],vect[1])
+			return Vector.fromPair(self.table[t][x][y])
 
 	def land(self, x, y) :
+		#Check if there is land at position
 
 		if type(x) == float or type(y) == float :
 		
 			fx = math.floor(x)
 			cx = math.ceil(x)
-			
 			assert fx >= 0, "negative abscisse"
 			assert cx <= self.w - 1, "abscisse overflow"
 			
 			fy = math.floor(y)
 			cy = math.ceil(y)
-			
 			assert fy >= 0, "negative ordinate"
 			assert cy <= self.h - 1, "ordinate overflow"
 
@@ -121,11 +122,16 @@ class WindSpaceTime :
 			return numpy.isnan(self.table[0][x][y][0])
 		
 class WindSpace :
+
+	#WindSpace object : 2-dimentional grid representing the evolution of wind through space
+
+	#w : width of the spatial grid
+	#h : height of the spatial grid
+	#table : the grid table[x][y] = [dx, dy]
 	
-	def __init__(self, w, h, table = False) :
+	def __init__(self, w, h, table = None) :
 		
-		if type(table) != numpy.ndarray :
-			
+		if table is None :
 			table = numpy.zeros(shape=(w,h,2))
 		
 		self.w = w
@@ -133,31 +139,26 @@ class WindSpace :
 		self.table = table
 		
 	def wind(self, x, y) :
+		#Get Wind object from position (with bilinear interpolation)
 
 		if type(x) == float or type(y) == float :
 		
 			fx = math.floor(x)
 			cx = math.ceil(x)
-
 			dx = x - fx
-			
 			assert fx >= 0, "negative abscisse"
 			assert cx <= self.w - 1, "abscisse overflow"
 			
 			fy = math.floor(y)
 			cy = math.ceil(y)
-
 			dy = y - fy
-			
 			assert fy >= 0, "negative ordinate"
 			assert cy <= self.h - 1, "ordinate overflow"
 			
 			lerpfx = (1-dy) * self.table[fx][fy] + dy * self.table[fx][cy]
 			lerpcx = (1-dy) * self.table[cx][fy] + dy * self.table[cx][cy]
 			
-			vect = (1-dx) * lerpfx + dx * lerpcx
-			
-			return Wind(vect[0],vect[1])
+			return Vector.fromPair((1-dx) * lerpfx + dx * lerpcx)
 
 		else :
 
@@ -166,23 +167,20 @@ class WindSpace :
 			assert y >= 0, "negative ordinate"
 			assert y <= self.h - 1, "ordinate overflow"
 
-			vect = self.table[x][y]
-
-			return Wind(vect[0],vect[1])
+			return Vector.fromPair(self.table[x][y])
 
 	def land(self, x, y) :
+		#Check if there is land at position
 
 		if type(x) == float or type(y) == float :
 		
 			fx = math.floor(x)
 			cx = math.ceil(x)
-			
 			assert fx >= 0, "negative abscisse"
 			assert cx <= self.w - 1, "abscisse overflow"
 			
 			fy = math.floor(y)
 			cy = math.ceil(y)
-			
 			assert fy >= 0, "negative ordinate"
 			assert cy <= self.h - 1, "ordinate overflow"
 
@@ -199,17 +197,3 @@ class WindSpace :
 			assert y <= self.h - 1, "ordinate overflow"
 
 			return numpy.isnan(self.table[x][y][0])
-		
-		
-class Wind :
-	
-	def __init__(self, x = 0, y = 0) :
-		
-		self.x = x
-		self.y = y
-		
-	def __str__(self) :
-		
-		return "({:.1f},{:.1f})".format(self.x, self.y)
-		
-

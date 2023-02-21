@@ -7,8 +7,13 @@ from wind import WindSpaceTime, WindSpace
 from route import Route
 
 
-def show_wst(wst: WindSpaceTime, timestep=0.1, spacestep=1, route=None, csea=(157, 219, 255), cland=(130, 167, 117),
-			 cwind=(59, 114, 124), cboat=(176, 95, 102)):
+def showWindSpaceTime(wst: WindSpaceTime, timestep=0.1, spacestep=1, route=None):
+	#Display a run of the WindSpaceTime object with a route
+
+	csea=(157, 219, 255)
+	cland=(130, 167, 117)
+	cwind=(59, 114, 124)
+	cboat=(176, 95, 102)
 	
 	pygame.init()
 	pygame_info = pygame.display.Info()
@@ -56,8 +61,14 @@ def show_wst(wst: WindSpaceTime, timestep=0.1, spacestep=1, route=None, csea=(15
 	pygame.quit()
 
 
-def show_ws(ws: WindSpace, spacestep=1, route=None, csea=(157, 219, 255), cland=(130, 167, 117),
-			cwind=(59, 114, 124), cboat=(176, 95, 102)):
+def showWindSpace(ws: WindSpace, spacestep=1, route=None):
+	#Display a run of the WindSpaceTime object with a route
+
+	csea=(157, 219, 255)
+	cland=(130, 167, 117)
+	cwind=(59, 114, 124)
+	cboat=(176, 95, 102)
+
 	pygame.init()
 	pygame_info = pygame.display.Info()
 	dw = pygame_info.current_w
@@ -93,9 +104,11 @@ def show_ws(ws: WindSpace, spacestep=1, route=None, csea=(157, 219, 255), cland=
 	pygame.quit()
 
 def drawSea(surface, color) :
+	#Draw the sea onto a pygame surface
 	surface.fill(color)
 
 def drawLands(surface, ws : WindSpace, f, color) :
+	#Draw the lands onto a pygame surface
 
 	for x in range(0, ws.w):
 		
@@ -137,11 +150,13 @@ def drawLands(surface, ws : WindSpace, f, color) :
 							(f * (x + 1), f * y), (f * (x + 1), f * (y + 1)), (f * x, f * (y + 1))))
 
 def drawRoute(surface, route : Route, f, color) :
+	#Draw a route onto a pygame surface
 
 	if len(route.trace) > 0:
 		pygame.draw.aalines(surface, color, False, route.export(f))
 
 def drawWinds(surface, ws : WindSpace, spacestep, f, color) :
+	#Draw the winds onto a pygame surface
 
 	for x in range(0, ws.w, spacestep):
 			
@@ -162,8 +177,8 @@ def drawWinds(surface, ws : WindSpace, spacestep, f, color) :
 				pygame.draw.line(surface, color, (ax, ay - 1), (ax, ay + 1))
 
 def drawBoat(surface, route : Route, step, f, color) :
+	#Draw a boat onto a pygame surface
 
 	if len(route.trace) > step:
 		point = route.trace[step]
 		pygame.draw.circle(surface, color, (round(point.x * f), round(point.y * f)), 5)
-
