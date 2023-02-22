@@ -1,14 +1,17 @@
 import math
 import numpy
-import os
-os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
-import pygame
+
 from wind import WindSpaceTime, WindSpace
 from route import Route
 from geometry import Vector
 
+import os
+os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
+import pygame
 
-def showWindSpaceTime(wst: WindSpaceTime, timestep=0.1, spacestep=1, route=None):
+
+
+def showWindSpaceTime(wst, timestep = 0.1, spacestep = 1, route = None):
 	#Display a run of the WindSpaceTime object with a route
 
 	csea=(157, 219, 255)
@@ -62,8 +65,7 @@ def showWindSpaceTime(wst: WindSpaceTime, timestep=0.1, spacestep=1, route=None)
 	
 	pygame.quit()
 
-
-def showWindSpace(ws: WindSpace, spacestep=1, route=None):
+def showWindSpace(ws, spacestep = 1, route = None):
 	#Display a run of the WindSpaceTime object with a route
 
 	csea=(157, 219, 255)
@@ -110,7 +112,7 @@ def drawSea(surface, color) :
 	#Draw the sea onto a pygame surface
 	surface.fill(color)
 
-def drawLands(surface, ws : WindSpace, f, color) :
+def drawLands(surface, ws, f, color) :
 	#Draw the lands onto a pygame surface
 
 	for x in range(0, ws.w):
@@ -152,13 +154,13 @@ def drawLands(surface, ws : WindSpace, f, color) :
 							pygame.draw.polygon(surface, color, (
 							(f * (x + 1), f * y), (f * (x + 1), f * (y + 1)), (f * x, f * (y + 1))))
 
-def drawRoute(surface, route : Route, f, color) :
+def drawRoute(surface, route, f, color) :
 	#Draw a route onto a pygame surface
 
 	if len(route.trace) > 0:
 		pygame.draw.aalines(surface, color, False, route.export(f))
 
-def drawWinds(surface, ws : WindSpace, spacestep, f, color) :
+def drawWinds(surface, ws, spacestep, f, color) :
 	#Draw the winds onto a pygame surface
 
 	for x in range(0, ws.w, spacestep):
@@ -179,7 +181,7 @@ def drawWinds(surface, ws : WindSpace, spacestep, f, color) :
 				pygame.draw.line(surface, color, (ax - 1, ay), (ax + 1, ay))
 				pygame.draw.line(surface, color, (ax, ay - 1), (ax, ay + 1))
 
-def drawBoat(surface, route : Route, step, f, color, r = 6) :
+def drawBoat(surface, route, step, f, color, r = 6) :
 	#Draw a boat onto a pygame surface
 
 	if step > len(route.moves) - 1:

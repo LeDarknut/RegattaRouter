@@ -1,6 +1,7 @@
 import math
 import numpy
 import pickle
+
 from geometry import Vector
 
 class WindSpaceTime :
@@ -26,7 +27,7 @@ class WindSpaceTime :
 	def fromFile(cls, filename) :
 		#Get WindSPaceTime compiled from grib
 
-		table = pickle.load(open("data/compiled/{0}.bin".format(filename), "rb"))
+		table = pickle.load(open("data/bin/wind/{0}.bin".format(filename), "rb"))
 		
 		return cls(table.shape[0], table.shape[1], table.shape[2], table)
 		

@@ -1,6 +1,12 @@
 import math
 import random
 
+def rad(angle) :
+	return math.pi * angle / 180
+
+def deg(angle) :
+	return 180 * angle / math.pi
+
 class Vector :
 
 	#Vector object
@@ -23,6 +29,9 @@ class Vector :
 	@classmethod
 	def fromRandom(cls, w, h):
 		return cls(random.random() * w, random.random() * h)
+
+	def __str__(self):
+		return "({0:.2f}, {1:.2f})".format(self.x, self.y)
 
 	def __add__(self, b):
 		return Vector(self.x + b.x, self.y + b.y)
@@ -77,7 +86,6 @@ class Vector :
 		else:
 			return Vector(0, 0)
 			
-
 	def __ipow__(self, b):
 		#Set a.norm() to a.norm() ** b
 		if self.x != 0 or self.y != 0 :
@@ -220,6 +228,25 @@ class Vector :
 	def hflip(self):
 		#(-x, y)
 		self.x = -self.x
+
+	def rotated(self, angle):
+		c, s = math.cos(angle), math.sin(angle)
+		return Vector(c * self.x - s * self.y, s * self.x + c * self.y)
+
+	def rotate(self, angle):
+		c, s = math.cos(angle), math.sin(angle)
+		self.x = c * self.x - s * self.y
+		self.y = s * self.x + c * self.y 
+
+	def ranged(self, lx, rx, dy, uy):
+		return Vector(max(lx, min(self.x, rx)), max(dy, min(self.y, uy)))
+
+	def range(self, lx, rx, dy, uy):
+		self.x = max(lx, min(self.x, rx))
+		self.y = max(dy, min(self.y, uy))
+
+	def inrange(self, lx, rx, dy, uy):
+		return (self.x >= lx and self.x <= rx and self.y >= dy and self.y <= uy)
 
 	def pair(self):
 		#(x, y)

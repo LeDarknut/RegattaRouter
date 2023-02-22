@@ -4,7 +4,7 @@ import numpy
 
 def comp(name) :
 	
-	v = os.popen("wgrib2 divided/{0}/land.grb -grid".format(name)).read().split("\n")
+	v = os.popen("wgrib2 wind/region/{0}/land.grb -grid".format(name)).read().split("\n")
 	
 	dim = v[1][v[1].index("(") + 1:v[1].index(")")].split(" x ")
 	
@@ -16,11 +16,11 @@ def comp(name) :
 	S = int(v[2].split(".")[0].split(" ")[-1])
 	N = int(v[2].split(".")[1].split(" ")[-1])
 
-	files = sorted(os.listdir("divided/{0}".format(name)))[:-1]
+	files = sorted(os.listdir("wind/region/{0}".format(name)))[:-1]
 
 	L = numpy.zeros((w, h))
 
-	os.popen("wgrib2 divided/{0}/land.grb -csv land.csv".format(name)).read()
+	os.popen("wgrib2 wind/region/{0}/land.grb -csv land.csv".format(name)).read()
 
 	with open("land.csv", "r") as csv :
 		
@@ -41,7 +41,7 @@ def comp(name) :
 
 	for t,f in enumerate(files) :
 			
-		os.popen("wgrib2 divided/{0}/{1} -csv wind.csv".format(name, f)).read()
+		os.popen("wgrib2 wind/region/{0}/{1} -csv wind.csv".format(name, f)).read()
 
 		with open("wind.csv", "r") as csv :
 			
@@ -76,7 +76,7 @@ def comp(name) :
 		
 		print(f[:-4])
 			
-	pickle.dump(table, open("compiled/{0}.bin".format(name), "wb"))
+	pickle.dump(table, open("bin/wind/{0}.bin".format(name), "wb"))
 	
 	os.unlink("wind.csv")
 
