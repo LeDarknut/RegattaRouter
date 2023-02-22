@@ -11,7 +11,7 @@ timeunit = 21600    #6h in seconds
 spaceunit = 27830   #0.25° of the earth in meters
 
 wst = WindSpaceTime.fromFile("Sargasso")
-boat = Boat.fromFile("imoca60")
+boat = Boat.fromFile("Imoca60")
 timediv = 10
 
 route = Route(Vector(2 * wst.w // 3, wst.h // 3) + Vector.fromRandom(wst.w // 4, wst.h // 4))

@@ -18,4 +18,4 @@ with open("polar/imoca60.csv", "r") as csv :
 			
 			polar[angle][windspeed] = speed
 			
-pickle.dump(polar, open("bin/polar/imoca60.bin", "wb"))
+	pickle.dump(polar, open("bin/polar/imoca60.bin", "wb"))
