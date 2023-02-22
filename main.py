@@ -6,7 +6,7 @@ from display import showWindSpaceTime
 from route import Route
 
 wst = WindSpaceTime.fromFile("Sargasso")
-route = Route(Vector(wst.w // 2, wst.h // 2) + Vector.fromRandom(wst.w // 3, wst.h // 3))
+route = Route(Vector(wst.w // 3, wst.h // 3) + Vector.fromRandom(wst.w // 4, wst.h // 4))
 angle = 2 * random.random() * math.pi
 speed = 1
 
@@ -28,7 +28,7 @@ for i in range(timediv * wst.t):
 
     else :
 
-        route.move(wst.wind(t, pos.x, pos.y) * 0.1)
+        route.move(wst.wind(t, pos.x, pos.y) * 0.05)
 
     t = min(t + 1 / timediv, wst.t - 1)
 
