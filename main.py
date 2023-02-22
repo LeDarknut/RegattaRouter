@@ -8,7 +8,7 @@ from geometry import Vector, rad, deg
 from boat import Boat
 
 timeunit = 21600    #6h in seconds
-spaceunit = 27830   #0.25° of the earth in meter
+spaceunit = 27830   #0.25° of the earth in meters
 
 wst = WindSpaceTime.fromFile("Sargasso")
 boat = Boat.fromFile("imoca60")
