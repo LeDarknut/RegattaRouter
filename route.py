@@ -25,7 +25,7 @@ class Route:
 		assert t >= 0         , "negative time"
 		assert t <= self.t - 1, "time overflow"
 
-		if type(t) == float :
+		if isinstance(t, (numpy.floating, float)) :
 			ft = math.floor(t)
 			dt = t - ft
 			return self.trace[ft] + dt * self.moves[ft]

@@ -72,11 +72,16 @@ class Vector :
 
 	def __pow__(self, b):
 		#Set a.norm() to a.norm() ** b
-		return self % (self.square() ** (b * 0.5))
+		if self.x != 0 or self.y != 0 :
+			return self % (self.square() ** (b * 0.5))
+		else:
+			return Vector(0, 0)
+			
 
 	def __ipow__(self, b):
 		#Set a.norm() to a.norm() ** b
-		self %= (self.square() ** (b * 0.5))
+		if self.x != 0 or self.y != 0 :
+			self %= (self.square() ** (b * 0.5))
 
 	def __or__(self, b):
 		#Dot product a.b
@@ -157,11 +162,11 @@ class Vector :
 		self %= (0.5 * math.log(a.square(), b))
 
 	def exped(self, b):
-		#Set a.norm() to log_b(a.norm())
+		#Set a.norm() to b ** a.norm()
 		return self % (b ** a.norm())
 
 	def exp(self, b):
-		#Set a.norm() to log_b(a.norm())
+		#Set a.norm() to b ** a.norm()
 		self %= (b ** a.norm())
 
 	def rounded(self):

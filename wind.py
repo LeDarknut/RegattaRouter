@@ -1,6 +1,7 @@
 import math
 import numpy
 import pickle
+from geometry import Vector
 
 class WindSpaceTime :
 
@@ -35,7 +36,7 @@ class WindSpaceTime :
 		assert t >= 0         , "negative time"
 		assert t <= self.t - 1, "time overflow"
 
-		if type(t) == float :
+		if isinstance(t, (numpy.floating, float)) :
 		
 			ft = math.floor(t)
 			ct = math.ceil(t)
@@ -58,7 +59,7 @@ class WindSpaceTime :
 		assert y >= 0         , "negative ordinate"
 		assert y <= self.h - 1, "ordinate overflow"
 
-		if type(t) == float or type(x) == float or type(y) == float :
+		if isinstance(t, (numpy.floating, float)) or isinstance(x, (numpy.floating, float)) or isinstance(y, (numpy.floating, float)) :
 		
 			ft = math.floor(t)
 			ct = math.ceil(t)
@@ -94,7 +95,7 @@ class WindSpaceTime :
 		assert y >= 0         , "negative ordinate"
 		assert y <= self.h - 1, "ordinate overflow"
 
-		if type(x) == float or type(y) == float :
+		if isinstance(x, (numpy.floating, float)) or isinstance(y, (numpy.floating, float)) :
 		
 			fx = math.floor(x)
 			cx = math.ceil(x)
@@ -136,7 +137,7 @@ class WindSpace :
 		assert y >= 0         , "negative ordinate"
 		assert y <= self.h - 1, "ordinate overflow"
 
-		if type(x) == float or type(y) == float :
+		if isinstance(x, (numpy.floating, float)) or isinstance(y, (numpy.floating, float)) :
 		
 			fx = math.floor(x)
 			cx = math.ceil(x)
@@ -163,7 +164,7 @@ class WindSpace :
 		assert y >= 0         , "negative ordinate"
 		assert y <= self.h - 1, "ordinate overflow"
 
-		if type(x) == float or type(y) == float :
+		if isinstance(x, (numpy.floating, float)) or isinstance(y, (numpy.floating, float)) :
 		
 			fx = math.floor(x)
 			cx = math.ceil(x)
