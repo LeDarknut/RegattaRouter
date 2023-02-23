@@ -35,6 +35,7 @@ def showWindSpaceTime(wst, timestep = 0.1, spacestep = 1, route = None):
 
 	drawSea(landmap, csea)
 	drawLands(landmap, wst.windspace(0), f, cland)
+	drawPoints(landmap, wst.windspace(0), spacestep, f, cwind)
 	drawRoute(landmap, route, f, ctraj)
 
 	step = 0
@@ -89,6 +90,7 @@ def showWindSpace(ws, spacestep = 1, route = None):
 
 	drawSea(landmap, csea)
 	drawLands(landmap, wst.windspace(0), f, cland)
+	drawPoints(landmap, wst.windspace(0), spacestep, f, cwind)
 	drawRoute(landmap, route, f, ctraj)
 	
 	while running:
@@ -154,6 +156,25 @@ def drawLands(surface, ws, f, color) :
 							pygame.draw.polygon(surface, color, (
 							(f * (x + 1), f * y), (f * (x + 1), f * (y + 1)), (f * x, f * (y + 1))))
 
+def drawPoints(surface, ws, spacestep, f, color) :
+
+	for x in range(0, ws.w, spacestep):
+			
+		for y in range(0, ws.h, spacestep):
+
+			vect = ws.table[x][y]
+			
+			if not (numpy.isnan(vect[0])):
+
+				ax = round(f * (x + 0.5))
+				ay = round(f * (y + 0.5))
+				
+				bx = ax + round(f * vect[0] * 0.3)
+				by = ay + round(f * vect[1] * 0.3)
+				
+				pygame.draw.line(surface, color, (ax - 1, ay), (ax + 1, ay))
+				pygame.draw.line(surface, color, (ax, ay - 1), (ax, ay + 1))
+
 def drawRoute(surface, route, f, color) :
 	#Draw a route onto a pygame surface
 
@@ -178,8 +199,6 @@ def drawWinds(surface, ws, spacestep, f, color) :
 				by = ay + round(f * vect[1] * 0.3)
 				
 				pygame.draw.aaline(surface, color, (ax, ay), (bx, by))
-				pygame.draw.line(surface, color, (ax - 1, ay), (ax + 1, ay))
-				pygame.draw.line(surface, color, (ax, ay - 1), (ax, ay + 1))
 
 def drawBoat(surface, route, step, f, color, r = 6) :
 	#Draw a boat onto a pygame surface
