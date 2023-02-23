@@ -14,7 +14,10 @@ wst = WindSpaceTime.fromFile("Sargasso")
 boat = Boat.fromFile("Imoca60")
 timediv = 10
 
-route = Route(Vector(2 * wst.w // 3, wst.h // 3) + Vector.fromRandom(wst.w // 4, wst.h // 4))
+start = Vector(100, 150)
+goal = Vector(150, 10)
+
+route = Route(start)
 
 def downwind(route) :
 
@@ -42,7 +45,7 @@ def downwind(route) :
 
 				route.move(sail)
 
-		t = t + 1 / timediv
+		t = min(t + 1 / timediv, wst.t - 1)
 
 def perpendicular(route) :
 
@@ -70,7 +73,7 @@ def perpendicular(route) :
 
 				route.move(sail)
 
-		t = t + 1 / timediv
+		t = min(t + 1 / timediv, wst.t - 1)
 
 def fastest(route) :
 
@@ -126,6 +129,62 @@ def fastest(route) :
 
 		t = min(t + 1 / timediv, wst.t - 1)
 
-fastest(route)
+def greedy(route) :
+
+	t = 0
+
+	for i in range(timediv * wst.t - 1):
+
+		pos = route.current()
+
+		direction = goal - pos
+
+		if direction.norm() < 1 :
+
+			break
+
+		if wst.land(pos.x, pos.y) or wst.wind(t, pos.x, pos.y) == Vector(0, 0) :
+
+			route.move(Vector(0, 0))
+
+		else :
+
+			wind = wst.wind(t, pos.x, pos.y)
+
+			maxSpeed = 0
+			maxAngle = 0
+
+			for angle in range(-80, 80, 1) :
+
+				sail = boat.sail(direction.rotated(rad(angle)), wind) * (timeunit / timediv) / spaceunit
+
+				speed = sail | direction
+
+				if speed <= maxSpeed :
+
+					continue
+
+				dest = route.peek(sail)
+
+				if (not dest.inrange(0, wst.w - 1, 0, wst.h - 1)) or wst.land(dest.x, dest.y) :
+
+					continue
+
+				maxSpeed = speed
+				maxAngle = angle
+
+			sail = boat.sail(direction.rotated(rad(maxAngle)), wind) * (timeunit / timediv) / spaceunit
+
+			if not route.peek(sail).inrange(0, wst.w - 1, 0, wst.h - 1) :
+
+				route.move(Vector(0, 0))
+
+			else :
+
+				route.move(sail)
+
+		t = min(t + 1 / timediv, wst.t - 1)
+
+greedy(route)
 
 showWindSpaceTime(wst, 1 / timediv, 3, route)
